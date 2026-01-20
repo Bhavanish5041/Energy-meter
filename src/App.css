@@ -1,0 +1,7 @@
+@import url('/theme_switch.css');
+
+/* App-wide styles */
+.app-container {
+  min-height: 100vh;
+}
+

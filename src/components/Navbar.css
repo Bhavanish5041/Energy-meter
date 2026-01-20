@@ -1,0 +1,84 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.dark .navbar {
+  background-color: #1e1e1e;
+}
+
+.nav-logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.dark .nav-logo {
+  color: #4dabf7;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.dark .nav-links a {
+  color: #ccc;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #007bff;
+}
+
+.dark .nav-links a:hover,
+.dark .nav-links a.active {
+  color: #4dabf7;
+}
+
+.logout-nav-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-weight: 500;
+}
+
+.logout-nav-btn:hover {
+  background: #0056b3;
+}
+
+.dark .logout-nav-btn {
+  background: #4dabf7;
+  color: #111;
+}
+
+.dark .logout-nav-btn:hover {
+  background: #339af0;
+}
+

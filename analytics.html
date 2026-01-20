@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics - Smart Energy Meter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="theme_switch.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            color: #222;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        html.dark body {
+            background-color: #121212;
+            color: #f0f0f0;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #007bff;
+        }
+
+        html.dark .navbar,
+        .dark .navbar {
+            background-color: #1e1e1e;
+        }
+
+        html.dark .nav-logo,
+        .dark .nav-logo {
+            color: #4dabf7;
+        }
+
+        html.dark .nav-links a,
+        .dark .nav-links a {
+            color: #ccc;
+        }
+
+        html.dark .nav-links a:hover,
+        html.dark .nav-links a.active,
+        .dark .nav-links a:hover,
+        .dark .nav-links a.active {
+            color: #4dabf7;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1000px;
+            margin: 100px auto 2rem;
+            padding: 0 1rem;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        html.dark .chart-container,
+        .dark .chart-container {
+            background: #1e1e1e;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.05);
+        }
+
+        .chart-container h3 {
+            text-align: center;
+            margin-top: 0;
+            color: #007bff;
+        }
+    </style>
+    <script>
+        // PREVENT FLASH OF UNSTYLED CONTENT (FOUC)
+        // Run this immediately before the body is rendered
+        if (localStorage.getItem('mode') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</head>
+
+<body>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">Smart Energy Meter</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="analytics.html" class="active">Analytics</a></li>
+            <li><a href="alerts.html">Alerts</a></li>
+        </ul>
+        <label class="theme-switch">
+            <input type="checkbox" class="theme-switch__checkbox" id="theme-checkbox">
+            <div class="theme-switch__container">
+                <div class="theme-switch__clouds"></div>
+                <div class="theme-switch__stars-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M135.831 3.00688C135.055 3.85027 134.111 4.29946 133 4.35447C134.111 4.40947 135.055 4.85867 135.831 5.71123C136.607 6.55462 136.996 7.56303 136.996 8.72727C136.996 7.95722 137.172 7.25134 137.525 6.59129C137.886 5.93124 138.372 5.39954 138.98 5.00535C139.598 4.60199 140.268 4.39114 141 4.35447C139.88 4.2903 138.936 3.85027 138.16 3.00688C137.384 2.16348 136.996 1.16425 136.996 0C136.996 1.16425 136.607 2.16348 135.831 3.00688ZM31 23.3545C32.1114 23.2995 33.0551 22.8503 33.8313 22.0069C34.6075 21.1635 34.9956 20.1642 34.9956 19C34.9956 20.1642 35.3837 21.1635 36.1599 22.0069C36.9361 22.8503 37.8798 23.2903 39 23.3545C38.2679 23.3911 37.5976 23.602 36.9802 24.0053C36.3716 24.3995 35.8864 24.9312 35.5248 25.5913C35.172 26.2513 34.9956 26.9572 34.9956 27.7273C34.9956 26.563 34.6075 25.5546 33.8313 24.7112C33.0551 23.8587 32.1114 23.4095 31 23.3545ZM0 36.3545C1.11136 36.2995 2.05513 35.8503 2.83131 35.0069C3.6075 34.1635 3.99559 33.1642 3.99559 32C3.99559 33.1642 4.38368 34.1635 5.15987 35.0069C5.93605 35.8503 6.87982 36.2903 8 36.3545C7.26792 36.3911 6.59757 36.602 5.98015 37.0053C5.37155 37.3995 4.88644 37.9312 4.52481 38.5913C4.172 39.2513 3.99559 39.9572 3.99559 40.7273C3.99559 39.563 3.6075 38.5546 2.83131 37.7112C2.05513 36.8587 1.11136 36.4095 0 36.3545ZM56.8313 24.0069C56.0551 24.8503 55.1114 25.2995 54 25.3545C55.1114 25.4095 56.0551 25.8587 56.8313 26.7112C57.6075 27.5546 57.9956 28.563 57.9956 29.7273C57.9956 28.9572 58.172 28.2513 58.5248 27.5913C58.8864 26.9312 59.3716 26.3995 59.9802 26.0053C60.5976 25.602 61.2679 25.3911 62 25.3545C60.8798 25.2903 59.9361 24.8503 59.1599 24.0069C58.3837 23.1635 57.9956 22.1642 57.9956 21C57.9956 22.1642 57.6075 23.1635 56.8313 24.0069ZM81 25.3545C82.1114 25.2995 83.0551 24.8503 83.8313 24.0069C84.6075 23.1635 84.9956 22.1642 84.9956 21C84.9956 22.1642 85.3837 23.1635 86.1599 24.0069C86.9361 24.8503 87.8798 25.2903 89 25.3545C88.2679 25.3911 87.5976 25.602 86.9802 26.0053C86.3716 26.3995 85.8864 26.9312 85.5248 27.5913C85.172 28.2513 84.9956 28.9572 84.9956 29.7273C84.9956 28.563 84.6075 27.5546 83.8313 26.7112C83.0551 25.8587 82.1114 25.4095 81 25.3545ZM136 36.3545C137.111 36.2995 138.055 35.8503 138.831 35.0069C139.607 34.1635 139.996 33.1642 139.996 32C139.996 33.1642 140.384 34.1635 141.16 35.0069C141.936 35.8503 142.88 36.2903 144 36.3545C143.268 36.3911 142.598 36.602 141.98 37.0053C141.372 37.3995 140.886 37.9312 140.525 38.5913C140.172 39.2513 139.996 39.9572 139.996 40.7273C139.996 39.563 139.607 38.5546 138.831 37.7112C138.055 36.8587 137.111 36.4095 136 36.3545ZM101.831 49.0069C101.055 49.8503 100.111 50.2995 99 50.3545C100.111 50.4095 101.055 50.8587 101.831 51.7112C102.607 52.5546 102.996 53.563 102.996 54.7273C102.996 53.9572 103.172 53.2513 103.525 52.5913C103.886 51.9312 104.372 51.3995 104.98 51.0053C105.598 50.602 106.268 50.3911 107 50.3545C105.88 50.2903 104.936 49.8503 104.16 49.0069C103.384 48.1635 102.996 47.1642 102.996 46C102.996 47.1642 102.607 48.1635 101.831 49.0069Z"
+                            fill="currentColor"></path>
+                    </svg>
+                </div>
+                <div class="theme-switch__circle-container">
+                    <div class="theme-switch__sun-moon-container">
+                        <div class="theme-switch__moon">
+                            <div class="theme-switch__spot"></div>
+                            <div class="theme-switch__spot"></div>
+                            <div class="theme-switch__spot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </label>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h2>Advanced Analytics</h2>
+
+        <div
+            style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; font-weight: bold; color: #007bff;">
+            <div>Live Power: <span id="live-power">0</span> W</div>
+            <div>Current Bill: <span id="live-bill">₹0.00</span></div>
+            <div>Live Power: <span id="live-power">0</span> W</div>
+            <div>Current Bill: <span id="live-bill">₹0.00</span></div>
+        </div>
+
+        <!-- Digital Twin Control -->
+        <div
+            style="text-align: center; margin-bottom: 1.5rem; background: #e9ecef; padding: 1rem; border-radius: 8px; display: inline-block; position: relative; left: 50%; transform: translateX(-50%);">
+            <span style="font-weight: bold; margin-right: 10px;">☀️ Virtual Solar Upgrade:</span>
+            <label class="switch"
+                style="position: relative; display: inline-block; width: 50px; height: 24px; vertical-align: middle;">
+                <input type="checkbox" id="solar-toggle">
+                <span class="slider round"
+                    style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                <style>
+                    .slider.round:before {
+                        position: absolute;
+                        content: "";
+                        height: 16px;
+                        width: 16px;
+                        left: 4px;
+                        bottom: 4px;
+                        background-color: white;
+                        transition: .4s;
+                        border-radius: 50%;
+                    }
+
+                    input:checked+.slider {
+                        background-color: #28a745;
+                    }
+
+                    input:checked+.slider:before {
+                        transform: translateX(26px);
+                    }
+                </style>
+            </label>
+            <span id="savings-display" style="margin-left: 15px; color: #28a745; font-weight: bold; display: none;">
+                Potential Savings: <span id="virtual-savings">₹0.00</span>/hr
+            </span>
+        </div>
+
+        <div class="charts-grid">
+            <!-- Real-Time Power -->
+            <div class="chart-container" style="grid-column: 1 / -1;">
+                <h3>Live Power Consumption (W)</h3>
+                <canvas id="realTimeChart" height="80"></canvas>
+            </div>
+
+            <!-- Weekly Consumption -->
+            <div class="chart-container">
+                <h3>Weekly Usage (kWh)</h3>
+                <canvas id="weeklyChart"></canvas>
+            </div>
+
+            <!-- Appliance Breakdown -->
+            <div class="chart-container">
+                <h3>Appliance Breakdown</h3>
+                <canvas id="breakdownChart"></canvas>
+            </div>
+
+            <!-- Monthly Cost -->
+            <div class="chart-container" style="grid-column: 1 / -1;">
+                <h3>Monthly Cost Projection (₹)</h3>
+                <canvas id="costChart" height="100"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Helper function to get chart text color based on theme
+        const getChartTextColor = () => {
+            return document.documentElement.classList.contains('dark') ? '#f0f0f0' : '#666';
+        };
+
+        // Helper function to update all chart colors
+        const updateChartColors = () => {
+            const textColor = getChartTextColor();
+            weeklyChart.options.plugins.legend.labels.color = textColor;
+            weeklyChart.options.scales = weeklyChart.options.scales || {};
+            if (weeklyChart.options.scales.x) {
+                weeklyChart.options.scales.x.ticks = weeklyChart.options.scales.x.ticks || {};
+                weeklyChart.options.scales.x.ticks.color = textColor;
+            }
+            if (weeklyChart.options.scales.y) {
+                weeklyChart.options.scales.y.ticks = weeklyChart.options.scales.y.ticks || {};
+                weeklyChart.options.scales.y.ticks.color = textColor;
+            }
+
+            breakdownChart.options.plugins.legend.labels.color = textColor;
+            costChart.options.plugins.legend.labels.color = textColor;
+            costChart.options.scales = costChart.options.scales || {};
+            if (costChart.options.scales.x) {
+                costChart.options.scales.x.ticks = costChart.options.scales.x.ticks || {};
+                costChart.options.scales.x.ticks.color = textColor;
+            }
+            if (costChart.options.scales.y) {
+                costChart.options.scales.y.ticks = costChart.options.scales.y.ticks || {};
+                costChart.options.scales.y.ticks.color = textColor;
+            }
+
+            realTimeChart.options.plugins.legend.labels.color = textColor;
+            realTimeChart.options.scales.x.ticks.color = textColor;
+            realTimeChart.options.scales.y.ticks.color = textColor;
+
+            weeklyChart.update('none');
+            breakdownChart.update('none');
+            costChart.update('none');
+            realTimeChart.update('none');
+        };
+
+        // Theme Toggle
+        const toggleCheckbox = document.getElementById('theme-checkbox');
+        toggleCheckbox.onchange = () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('mode', isDark ? 'dark' : 'light');
+            updateChartColors();
+        };
+
+        if (localStorage.getItem('mode') === 'dark') {
+            document.documentElement.classList.add('dark');
+            toggleCheckbox.checked = true;
+        }
+
+        // Chart Options for Dark Mode Compatibility
+        Chart.defaults.color = getChartTextColor();
+        Chart.defaults.borderColor = "rgba(0,0,0,0.1)";
+
+        // Weekly Chart
+        const weeklyChart = new Chart(document.getElementById('weeklyChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Energy (kWh)',
+                    data: [12, 19, 15, 17, 14, 22, 24],
+                    backgroundColor: '#007bff'
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        // Breakdown Chart
+        const breakdownChart = new Chart(document.getElementById('breakdownChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['AC', 'Fridge', 'Lights', 'Washer', 'Others'],
+                datasets: [{
+                    data: [45, 20, 15, 10, 10],
+                    backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff']
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        // Cost Chart
+        const costChart = new Chart(document.getElementById('costChart'), {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Estimated Cost (₹)',
+                    data: [800, 1650, 2400, 3200],
+                    borderColor: '#28a745',
+                    fill: false,
+                    tension: 0.3
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        // Real-Time Chart
+        const initialLabels = Array(60).fill('').map((_, i) => i); // 60 seconds history
+        const initialData = Array(60).fill(0);
+
+        const realTimeChart = new Chart(document.getElementById('realTimeChart'), {
+            type: 'line',
+            data: {
+                labels: initialLabels,
+                datasets: [{
+                    label: 'Live Power (W)',
+                    data: initialData,
+                    borderColor: '#ff5722',
+                    backgroundColor: 'rgba(255, 87, 34, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Virtual (With Solar)',
+                    data: Array(60).fill(null), // Initially empty/null so it doesn't show? Or 0? Let's use 0.
+                    borderColor: '#28a745',
+                    borderDash: [5, 5], // Dotted line
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    hidden: true // Hidden by default
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: { duration: 0 },
+                scales: {
+                    x: { display: false },
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Update chart colors on initial load
+        updateChartColors();
+
+        // Real-Time Socket Connection
+        const socket = io();
+
+        socket.on('energy-update', (data) => {
+            if (!data) return; // Safety check
+
+            // Update Text Counters
+            const livePowerElement = document.getElementById('live-power');
+            const liveBillElement = document.getElementById('live-bill');
+            if (livePowerElement && data.power !== undefined) {
+                livePowerElement.innerText = data.power.toFixed(2);
+            }
+            if (liveBillElement && data.bill !== undefined) {
+                liveBillElement.innerText = '₹' + data.bill;
+            }
+
+            // Digital Twin Updates
+            if (data.virtualSavings !== undefined) {
+                const savingEl = document.getElementById('virtual-savings');
+                if (savingEl) savingEl.innerText = '₹' + data.virtualSavings;
+            }
+
+            // 1. Update Weekly (Add to 'Sun')
+            // We exaggerate the effect for demo visibility: adding (energy * 100) to the bar
+            if (weeklyChart && data.energy !== undefined) {
+                const currentEnergy = data.energy;
+                const lastIndex = weeklyChart.data.datasets[0].data.length - 1;
+                // Base value 24 + cumulative energy (scaled for visibility)
+                weeklyChart.data.datasets[0].data[lastIndex] = 24 + (currentEnergy * 100);
+                weeklyChart.update();
+            }
+
+            // 2. Update Cost
+            // Similarly, we show the base projection + current accrued bill
+            if (costChart && data.bill !== undefined) {
+                const currentBill = parseFloat(data.bill);
+                if (!isNaN(currentBill)) {
+                    const costLen = costChart.data.datasets[0].data.length;
+                    // Base 3200 + current bill
+                    costChart.data.datasets[0].data[costLen - 1] = 3200 + currentBill;
+                    costChart.update();
+                }
+            }
+
+            // 3. Update Real-Time Chart
+            if (realTimeChart && data.power !== undefined) {
+                // Remove oldest
+                realTimeChart.data.labels.shift();
+                realTimeChart.data.datasets[0].data.shift();
+
+                // Add newest
+                realTimeChart.data.labels.push("");
+                realTimeChart.data.datasets[0].data.push(data.power);
+
+                // Add Virtual Data
+                if (data.virtualGridPower !== undefined) {
+                    realTimeChart.data.datasets[1].data.push(data.virtualGridPower);
+                } else {
+                    realTimeChart.data.datasets[1].data.push(data.power); // Fallback to same as power if no simulation
+                }
+
+                realTimeChart.update();
+            }
+        });
+
+        // Toggle Logic
+        document.getElementById('solar-toggle').addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            // Toggle dataset visibility
+            realTimeChart.data.datasets[1].hidden = !isChecked;
+            realTimeChart.update();
+
+            // Toggle text visibility
+            document.getElementById('savings-display').style.display = isChecked ? 'inline' : 'none';
+        });
+    </script>
+</body>
+
+</html>
