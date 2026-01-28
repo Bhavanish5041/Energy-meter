@@ -1,25 +1,25 @@
-# ⚡ Smart Energy Meter & Solar Digital Twin ⚡
+# Smart Energy Meter & Solar Digital Twin
 
-> A real-time IoT energy monitoring system comprising an ESP-based hardware meter, a Node.js/Express backend with WebSockets, and a modern React frontend with Digital Twin capabilities.
+A real-time IoT energy monitoring system comprising an ESP-based hardware meter, a Node.js/Express backend with WebSockets, and a modern React frontend with Digital Twin capabilities.
 
 ---
 
-## 📖 Table of Contents
-- [About the Project](#-about-the-project)
-- [Key Features](#-key-features)
-- [Technology Stack](#-technology-stack)
-- [Folder Structure](#-folder-structure)
-- [Getting Started](#-getting-started)
+## Table of Contents
+- [About the Project](#about-the-project)
+- [Key Features](#key-features)
+- [Technology Stack](#technology-stack)
+- [Folder Structure](#folder-structure)
+- [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Configuration](#configuration)
-- [Running the Application](#-running-the-application)
-- [Hardware Setup](#-hardware-setup)
-- [API Reference](#-api-reference)
+- [Running the Application](#running-the-application)
+- [Hardware Setup](#hardware-setup)
+- [API Reference](#api-reference)
 
 ---
 
-## 📝 About the Project
+## About the Project
 
 The **Smart Energy Meter** is designed to provide homeowners with real-time visibility into their electricity consumption. Unlike traditional meters, this system processes data instantly to calculate costs based on dynamic slabs (Indian Electricity Duty standards), predicts monthly bills, and monitors voltage/power surges.
 
@@ -27,7 +27,7 @@ It also features a **Solar Digital Twin**, which uses live weather data (via Ope
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 - **Real-Time Dashboard**: Live monitoring of Voltage (V), Current (A), Power (W), and Energy (kWh).
 - **Dynamic Cost Calculation**:
@@ -44,7 +44,7 @@ It also features a **Solar Digital Twin**, which uses live weather data (via Ope
 
 ---
 
-## 🛠 Technology Stack
+## Technology Stack
 
 - **Frontend**: React.js, Vite, Chart.js, CSS3 (Custom Dark/Light Theme).
 - **Backend**: Node.js, Express.js, Socket.io (for real-time bi-directional communication).
@@ -53,7 +53,7 @@ It also features a **Solar Digital Twin**, which uses live weather data (via Ope
 
 ---
 
-## 📂 Folder Structure
+## Folder Structure
 
 ```
 /
@@ -72,7 +72,7 @@ It also features a **Solar Digital Twin**, which uses live weather data (via Ope
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - **Node.js**: v16 or higher.
@@ -101,7 +101,7 @@ CITY=Mumbai
 
 ---
 
-## ▶️ Running the Application
+## Running the Application
 
 ### Option 1: Development Mode (Recommended)
 Runs both the React frontend and Node backend.
@@ -125,7 +125,7 @@ You will see fake voltage and current data being sent to your dashboard instantl
 
 ---
 
-## 🔌 Hardware Setup
+## Hardware Setup
 
 1.  **Components**: ESP8266 or ESP32, PZEM-004T (Power Monitor Module).
 2.  **Wiring**:
@@ -141,13 +141,9 @@ You will see fake voltage and current data being sent to your dashboard instantl
 
 ---
 
-## 📡 API Reference
+## API Reference
 
 #### POST `/api/data`
 Receiver endpoint for energy data.
 - **Body**: `{"voltage": 230.5, "current": 5.2, "power": 1200, "energy": 15.4}`
 - **Response**: `200 OK`
-
----
-
-*Built with ❤️ by Bhavanish*
