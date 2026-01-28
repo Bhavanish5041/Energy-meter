@@ -1,5 +1,5 @@
 .theme-switch {
-  --toggle-size: 15px; /* Scaled down a bit from 30px to fit navbar better */
+  --toggle-size: 15px; 
   --container-width: 5.625em;
   --container-height: 2.5em;
   --container-radius: 6.25em;
@@ -161,8 +161,6 @@
   -o-transition: var(--transition);
   transition: var(--transition);
 }
-
-/* actions */
 
 .theme-switch__checkbox:checked + .theme-switch__container {
   background-color: var(--container-night-bg);

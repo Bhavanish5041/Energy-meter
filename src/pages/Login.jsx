@@ -8,7 +8,7 @@ const Login = ({ onLogin, darkMode, setDarkMode }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simple authentication - in production, use proper auth
+
     if (username && password) {
       onLogin();
     }

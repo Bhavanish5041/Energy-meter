@@ -9,12 +9,10 @@ const Alerts = () => {
   React.useEffect(() => {
     if (!socket) return;
 
-    // Handle initial history
     socket.on('alert-history', (history) => {
       setAlerts(history);
     });
 
-    // Handle new alerts
     socket.on('new-alert', (newAlert) => {
       setAlerts(prev => [newAlert, ...prev]);
     });

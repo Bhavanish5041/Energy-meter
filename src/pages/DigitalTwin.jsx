@@ -11,7 +11,7 @@ import {
     Legend
 } from 'chart.js';
 import { useSocket } from '../hooks/useSocket';
-import './Analytics.css'; // Reusing analytics styles for now, or we can create DigitalTwin.css
+import './Analytics.css'; 
 
 ChartJS.register(
     CategoryScale,
@@ -28,7 +28,7 @@ const DigitalTwin = () => {
     const darkMode = document.body.classList.contains('dark');
     const textColor = darkMode ? '#f0f0f0' : '#666';
 
-    const [showSolar, setShowSolar] = useState(true); // Default to showing solar for this page
+    const [showSolar, setShowSolar] = useState(true); 
     const [realTimeData, setRealTimeData] = useState({
         labels: Array(60).fill(''),
         datasets: [
@@ -114,7 +114,7 @@ const DigitalTwin = () => {
                 and calculates your potential savings instantly.
             </p>
 
-            {/* Stats Cards */}
+            {}
             <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
                 <div className="stat-card" style={{ background: darkMode ? '#333' : '#fff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', minWidth: '200px', textAlign: 'center', border: '1px solid #28a745' }}>
                     <h4 style={{ margin: '0 0 0.5rem 0', color: '#28a745' }}>Simulated Solar Output</h4>

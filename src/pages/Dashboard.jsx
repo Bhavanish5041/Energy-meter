@@ -65,19 +65,19 @@ const Dashboard = () => {
 
   const detectAppliance = (delta) => {
     if (delta < 10) return null;
-    
+
     for (const appliance of applianceSignatures) {
       if (delta >= appliance.min && delta <= appliance.max) {
         return appliance;
       }
     }
-    
+
     const closest = applianceSignatures.reduce((prev, curr) => {
       const prevDiff = Math.abs(delta - (prev.min + prev.max) / 2);
       const currDiff = Math.abs(delta - (curr.min + curr.max) / 2);
       return currDiff < prevDiff ? curr : prev;
     });
-    
+
     return closest;
   };
 
@@ -86,16 +86,15 @@ const Dashboard = () => {
   useEffect(() => {
     if (!data) return;
 
-    // NILM Detection
     if (data.power !== undefined && previousPower > 0) {
       const delta = data.power - previousPower;
       const absDelta = Math.abs(delta);
-      
+
       if (absDelta > 20) {
         const appliance = detectAppliance(absDelta);
         if (appliance) {
           setDetectedAppliance({ ...appliance, delta });
-          
+
           if (detectionTimeout) {
             clearTimeout(detectionTimeout);
           }
@@ -103,7 +102,7 @@ const Dashboard = () => {
             setDetectedAppliance(null);
           }, 5000);
           setDetectionTimeout(timeout);
-          
+
           console.log(`NILM: Detected ${appliance.name} (${delta > 0 ? '+' : ''}${delta.toFixed(0)}W)`);
         }
       }
@@ -113,19 +112,17 @@ const Dashboard = () => {
       setPreviousPower(data.power);
     }
 
-    // Update Chart
     if (data.power !== undefined) {
       const time = new Date().toLocaleTimeString();
       setChartData(prev => {
         const newLabels = [...prev.labels, time];
         const newData = [...prev.datasets[0].data, data.power];
-        
-        // Keep only last 10 points
+
         if (newLabels.length > 10) {
           newLabels.shift();
           newData.shift();
         }
-        
+
         return {
           ...prev,
           labels: newLabels,
@@ -137,22 +134,20 @@ const Dashboard = () => {
       });
     }
 
-    // Update Log
     if (data.voltage !== undefined && data.current !== undefined && data.power !== undefined) {
       const time = new Date().toLocaleTimeString();
       const newEntry = `[${time}] ${data.voltage}V | ${data.current}A | ${data.power}W`;
       setLogEntries(prev => {
         const updated = [newEntry, ...prev];
-        return updated.slice(0, 50); // Keep only last 50
+        return updated.slice(0, 50); 
       });
     }
   }, [data, previousPower, detectionTimeout]);
 
-  // Budget calculation
   const BUDGET_LIMIT = 2000;
   const DAYS_IN_MONTH = 30;
   let budgetInfo = { used: 0, predicted: 0, percentage: 0, status: 'On Track', statusColor: '#28a745', barClass: '' };
-  
+
   if (data?.bill !== undefined && data?.energy !== undefined) {
     const currentDay = new Date().getDate();
     const daysPassed = Math.max(1, Math.min(currentDay, DAYS_IN_MONTH));
@@ -160,11 +155,11 @@ const Dashboard = () => {
     const avgDailyBill = currentBill / daysPassed;
     const predictedMonthlyBill = avgDailyBill * DAYS_IN_MONTH;
     const displayBill = Math.max(currentBill, predictedMonthlyBill);
-    
+
     budgetInfo.used = displayBill;
     budgetInfo.predicted = predictedMonthlyBill;
     budgetInfo.percentage = Math.min(100, (displayBill / BUDGET_LIMIT) * 100);
-    
+
     if (predictedMonthlyBill > BUDGET_LIMIT * 1.1) {
       budgetInfo.status = 'Over Budget';
       budgetInfo.statusColor = '#dc3545';
@@ -218,7 +213,7 @@ const Dashboard = () => {
         </div>
 
         <div className="main-content">
-          {/* Vampire Alert */}
+          {}
           {data?.vampireAlert && (
             <div className="vampire-alert">
               <h3>Vampire Load Detected!</h3>
@@ -229,7 +224,7 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* NILM Appliance Detection */}
+          {}
           {detectedAppliance && (
             <div className="appliance-detection-box">
               <h3>Appliance Detected</h3>
@@ -242,7 +237,7 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* Budget Burn Rate */}
+          {}
           <div className="budget-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
               <h3 style={{ margin: 0, color: '#007bff' }}>Monthly Budget</h3>
@@ -264,7 +259,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Eco Stats */}
+          {}
           <div className="eco-row">
             <div className="eco-card">
               <div>Carbon Footprint</div>
@@ -278,7 +273,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Cards */}
+          {}
           <div className="cards">
             <div className="card">
               Voltage<br />
@@ -298,14 +293,14 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Chart */}
+          {}
           <div className="chart-container">
             <Line data={chartData} options={chartOptions} />
           </div>
         </div>
       </div>
 
-      {/* Logout Button - handled by App.jsx */}
+      {}
     </main>
   );
 };
