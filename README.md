@@ -2,8 +2,6 @@
 
 A real-time IoT energy monitoring system comprising an ESP-based hardware meter, a Node.js/Express backend with WebSockets, and a modern React frontend with Digital Twin capabilities.
 
-![Dashboard Preview](public/dashboard_preview.png)
-
 ---
 
 ## Table of Contents
